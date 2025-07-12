@@ -86,6 +86,12 @@ def authorize():
         
         print(f"User info received: {user_info.get('email', 'No email')}")
         
+        # Domain validation - only allow @manureva.com emails
+        user_email = user_info.get('email', '')
+        if not user_email.endswith('@manureva.com'):
+            print(f"Access denied: {user_email} is not from @manureva.com domain")
+            return redirect("http://localhost:3000/?error=unauthorized_domain")
+        
         # Check if user exists, create if not
         user = User.query.filter_by(email=user_info["email"]).first()
         if not user:
