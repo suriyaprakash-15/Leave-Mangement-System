@@ -1,5 +1,5 @@
 import os
-from flask import Flask, redirect, url_for, session, jsonify, request
+from flask import Flask, redirect, url_for, session, jsonify, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from models import db, User
@@ -12,8 +12,8 @@ import requests
 app = Flask(__name__)
 app.config.from_object(Config)
 
-# Enable CORS
-CORS(app, origins=["http://localhost:3000"], supports_credentials=True)
+# Enable CORS with credentials
+CORS(app, origins=["http://localhost:3000"], supports_credentials=True, allow_headers=["Content-Type", "Authorization"])
 
 # Email config
 mail = Mail(app)
@@ -86,10 +86,11 @@ def authorize():
         
         print(f"User info received: {user_info.get('email', 'No email')}")
         
-        # Domain validation - only allow @manureva.com emails
+        # Domain validation - only allow @manureva.com and @manurevasolutions.net emails
         user_email = user_info.get('email', '')
-        if not user_email.endswith('@manureva.com'):
-            print(f"Access denied: {user_email} is not from @manureva.com domain")
+        allowed_domains = ['@manureva.com', '@manurevasolutions.net']
+        if not any(user_email.endswith(domain) for domain in allowed_domains):
+            print(f"Access denied: {user_email} is not from allowed domains")
             return redirect("http://localhost:3000/?error=unauthorized_domain")
         
         # Check if user exists, create if not
@@ -113,9 +114,10 @@ def authorize():
         session["user_email"] = user.email
         session["user_name"] = user.name
         
+        print(f"Session set - user_id: {session.get('user_id')}, user_email: {session.get('user_email')}")
         print("Redirecting to frontend...")
-        # Redirect back to login page (http://localhost:3000/)
-        return redirect("http://localhost:3000/")
+        # Redirect back to frontend with success parameter
+        return redirect("http://localhost:3000/?success=true")
     
     except requests.exceptions.Timeout:
         print("Request timeout")
@@ -127,26 +129,45 @@ def authorize():
 @app.route("/api/user")
 def get_user():
     """API endpoint to get current user info"""
+    print(f"Session data: {dict(session)}")
+    
     if "user_id" not in session:
+        print("No user_id in session")
         return jsonify({"error": "Not authenticated"}), 401
     
     user = User.query.get(session["user_id"])
     if not user:
+        print(f"User not found for id: {session['user_id']}")
         return jsonify({"error": "User not found"}), 404
     
-    return jsonify({
+    user_data = {
         "id": user.id,
         "email": user.email,
         "name": user.name,
         "profile_picture": user.profile_picture,
         "role": user.role
-    })
+    }
+    print(f"Returning user data: {user_data}")
+    return jsonify(user_data)
 
 @app.route("/api/logout")
 def logout():
     """Logout user"""
     session.clear()
     return jsonify({"message": "Logged out successfully"})
+
+@app.route('/api/proxy-image')
+def proxy_image():
+    image_url = request.args.get('url')
+    if not image_url:
+        return jsonify({'error': 'No URL provided'}), 400
+    try:
+        resp = requests.get(image_url, stream=True)
+        resp.raise_for_status()
+        return Response(resp.content, mimetype=resp.headers['Content-Type'])
+    except Exception as e:
+        print(f"Image proxy error: {e}")
+        return jsonify({'error': 'Failed to fetch image'}), 500
 
 def send_email(to, subject, body):
     try:

@@ -1,0 +1,203 @@
+.dashboard-container {
+  max-width: 700px;
+  margin: 32px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 0 0 32px 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 32px 0 32px;
+  border-bottom: 1px solid #eee;
+}
+
+.dashboard-header h2 {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.dashboard-header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.dashboard-profile-pic {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #f0f0f0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  margin-right: 4px;
+  border: 1px solid #e0e0e0;
+}
+
+.dashboard-date {
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.dashboard-logout {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 6px 16px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background 0.2s;
+}
+.dashboard-logout:hover {
+  background: #fbe9e7;
+}
+
+.dashboard-main {
+  padding: 24px 32px 0 32px;
+}
+
+.dashboard-main h3 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 18px;
+}
+
+.dashboard-leave-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+
+.dashboard-leave-card {
+  background: #fafbfc;
+  border: 1px solid #e3e6ea;
+  border-radius: 10px;
+  padding: 0;
+  min-height: 150px;
+  margin-bottom: 18px;
+  position: relative;
+  display: flex;
+  align-items: stretch;
+}
+
+.dashboard-leave-icon-type {
+  position: absolute;
+  top: 20px;
+  left: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dashboard-leave-icon {
+  font-size: 1.6rem;
+  margin-right: 6px;
+}
+
+.dashboard-leave-type {
+  font-weight: 600;
+  color: #181c2a;
+  font-size: 1.1rem;
+}
+
+.dashboard-leave-card-content {
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 150px;
+}
+
+.dashboard-leave-balance {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #181c2a;
+  margin-bottom: 2px;
+}
+.dashboard-leave-unit {
+  font-size: 1rem;
+  color: #888;
+  font-weight: 400;
+  margin-bottom: 8px;
+}
+.dashboard-leave-details {
+  font-size: 1rem;
+  color: #666;
+  margin-top: 2px;
+}
+
+.dashboard-actions {
+  display: flex;
+  gap: 12px;
+  margin: 18px 0 18px 0;
+}
+.dashboard-action-btn {
+  background: #f5f5f5;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 1rem;
+  color: #888;
+  cursor: not-allowed;
+}
+
+.dashboard-recent-requests {
+  margin-top: 18px;
+}
+.dashboard-recent-requests h4 {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.dashboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 0.98rem;
+}
+.dashboard-table th, .dashboard-table td {
+  border: 1px solid #e3e6ea;
+  padding: 8px 10px;
+  text-align: left;
+}
+.dashboard-table th {
+  background: #f5f7fa;
+  font-weight: 500;
+  color: #333;
+}
+.status-approved {
+  color: #388e3c;
+  font-weight: 600;
+}
+.status-rejected {
+  color: #d32f2f;
+  font-weight: 600;
+}
+
+.dashboard-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 19px;
+}
+.dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #181c2a;
+  margin: 0;
+}
+.dashboard-date-main {
+  font-size: 1.1rem;
+  color: #666;
+  font-weight: 500;
+} 
