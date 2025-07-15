@@ -142,13 +142,27 @@
   margin: 18px 0 18px 0;
 }
 .dashboard-action-btn {
-  background: #f5f5f5;
-  border: 1px solid #ddd;
+  background: #222; /* Darkest background */
+  border: 1px solid #111;
   border-radius: 6px;
   padding: 7px 18px;
   font-size: 1rem;
-  color: #888;
-  cursor: not-allowed;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.15s, box-shadow 0.15s, transform 0.08s;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.10);
+  font-weight: 600;
+}
+.dashboard-action-btn:hover, .dashboard-action-btn:focus {
+  background: #111;
+  color: #fff;
+  outline: none;
+}
+.dashboard-action-btn:active {
+  background: #000;
+  color: #fff;
+  transform: scale(0.97);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18);
 }
 
 .dashboard-recent-requests {

@@ -1,6 +1,18 @@
 # Leave Management System - Google OAuth Integration
-**Date:** December 11, 2024  
+**Date:** June 13, 2024  
 **Status:** ✅ Fully Functional
+
+---
+
+## 🆕 **Update Summary (June 13, 2024)**
+- **Dashboard now fetches user info directly** using a custom React hook and always displays the correct Google profile image (using a backend proxy to avoid Google hotlinking issues).
+- **Authentication and user state logic** is modularized in a custom React hook (`useAuth`).
+- **App.js now only handles routing**; all authentication and user logic is handled in components/hooks for clean separation.
+- **Login page** now handles Google OAuth redirect (`?success=true`) and routes authenticated users to the dashboard automatically.
+- **Frontend/backend separation** is strictly enforced: no backend logic in frontend files, and all API calls are made via utility functions.
+- **Codebase refactored** for maintainability and best practices.
+
+---
 
 ## 🎯 **Project Overview**
 A leave management system with Google OAuth 2.0 authentication, built with React frontend and Flask backend. Users can authenticate using their Google accounts and the system stores user information in PostgreSQL database.

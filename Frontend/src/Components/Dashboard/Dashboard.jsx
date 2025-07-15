@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import './Dashboard.css';
 import { useAuth } from '../../useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const leaveData = [
   {
@@ -70,21 +71,22 @@ const recentRequests = [
 const today = new Date();
 const formattedDate = today.toLocaleDateString('en-GB'); // DD/MM/YYYY
 
-const handleApplyLeave = () => {
-  alert('Apply Leave clicked!');
-};
-
 const handleViewHistory = () => {
   alert('View History clicked!');
 };
 
 const Dashboard = () => {
   const { user, handleLogout, checkAuthStatus } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     checkAuthStatus();
     // eslint-disable-next-line
   }, []);
+
+  const handleApplyLeave = () => {
+    navigate('/leaveform');
+  };
 
   return (
     <>
@@ -102,9 +104,9 @@ const Dashboard = () => {
             )}
             <span className="dashboard-profile-pic" title="Profile">
               {user && user.profile_picture ? (
-                <img
+                <img 
                   src={`http://localhost:5000/api/proxy-image?url=${encodeURIComponent(user.profile_picture)}`}
-                  alt="Profile"
+                  alt="Profile" 
                   style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', background: '#fff' }}
                 />
               ) : (

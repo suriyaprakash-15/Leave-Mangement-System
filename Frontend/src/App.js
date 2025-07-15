@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from
 import './App.css';
 import Login from './Components/Login/Login';
 import Dashboard from './Components/Dashboard/Dashboard';
+import LeaveData from './Components/Leave Form/Leave.jsx';
 
 function AppRoutes() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -139,6 +140,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/leaveform" element={<LeaveData />} />
       </Routes>
     </Router>
   );
