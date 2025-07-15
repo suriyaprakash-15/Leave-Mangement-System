@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import './Dashboard.css';
+import { useAuth } from '../../useAuth';
 
 const leaveData = [
   {
@@ -77,9 +78,14 @@ const handleViewHistory = () => {
   alert('View History clicked!');
 };
 
-const Dashboard = ({ user, onLogout }) => {
-  // Debug: Log the profile picture URL
-  console.log("Profile picture URL:", user && user.profile_picture);
+const Dashboard = () => {
+  const { user, handleLogout, checkAuthStatus } = useAuth();
+
+  useEffect(() => {
+    checkAuthStatus();
+    // eslint-disable-next-line
+  }, []);
+
   return (
     <>
       <header className="dashboard-header">
@@ -96,16 +102,16 @@ const Dashboard = ({ user, onLogout }) => {
             )}
             <span className="dashboard-profile-pic" title="Profile">
               {user && user.profile_picture ? (
-                <img 
+                <img
                   src={`http://localhost:5000/api/proxy-image?url=${encodeURIComponent(user.profile_picture)}`}
-                  alt="Profile" 
+                  alt="Profile"
                   style={{ width: '32px', height: '32px', borderRadius: '50%', objectFit: 'cover', background: '#fff' }}
                 />
               ) : (
                 <span role="img" aria-label="profile">👤</span>
               )}
             </span>
-            <button className="dashboard-logout" onClick={onLogout}>Logout</button>
+            <button className="dashboard-logout" onClick={handleLogout}>Logout</button>
           </div>
         </div>
       </header>

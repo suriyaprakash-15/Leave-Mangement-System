@@ -1,7 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from '../../useAuth';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({ error, onClearError }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { checkAuthStatus, isAuthenticated } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const successParam = urlParams.get('success');
+    if (successParam) {
+      checkAuthStatus().then(() => {
+        if (isAuthenticated) {
+          navigate('/dashboard');
+        }
+      });
+    }
+  }, [checkAuthStatus, isAuthenticated, navigate]);
 
   const handleGoogleLogin = () => {
     setIsLoading(true);

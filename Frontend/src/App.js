@@ -1,19 +1,3 @@
-<<<<<<< HEAD
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login1 from './Components/Login/Login1';
-import Dashboard from './Components/Dashboard/Dashboard';
-
-const App = () => {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login1 />} />
-        <Route path="/Login1" element={<Login1 />} />
-        <Route path="/Dashboard" element={<Dashboard />} />
-      </Routes>
-    </Router>
-=======
 import React, { useState, useEffect, useCallback } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import './App.css';
@@ -146,34 +130,16 @@ function AppRoutes() {
         }
       />
     </Routes>
->>>>>>> fd0948020e6468f6b1a67366e4fd7ed9404afc8f
   );
-};
+}
 
-<<<<<<< HEAD
-export default App;
-
-
-// import React from 'react';
-
-// import './App.css';
-// import Login from './Components/Login/Login1';
-// import Dashboard from './Components/Dashboard/Dashboard';
-
-// function App() {
-//   return (
-//     <div className="App">
-//       <Dashboard />
-//     </div>
-//   );
-// }
-
-// export default App;
-=======
 export default function App() {
   return (
     <Router>
-      <AppRoutes />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
     </Router>
   );
 }
