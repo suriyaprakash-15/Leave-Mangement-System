@@ -2,12 +2,14 @@ import os
 from flask import Flask, redirect, url_for, session, jsonify, request, Response
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
-from models import db, User
+from models import db  # Only import db at the top
 from datetime import date
 from flask_mail import Mail, Message
 from flask_cors import CORS
 from config import Config
 import requests
+from flask import request, jsonify, session
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -20,6 +22,9 @@ mail = Mail(app)
 
 db.init_app(app)
 migrate = Migrate(app, db)
+
+# Import models after db is initialized to avoid circular import
+from models import User, LeaveRequest, LeavePolicy, DataMigration
 
 @app.route("/")
 def index():
@@ -175,6 +180,93 @@ def send_email(to, subject, body):
         mail.send(msg)
     except Exception as e:
         print(f"Email sending failed: {e}")
+
+# Endpoint: User Leave Summary
+@app.route('/api/user-leave-summary')
+def user_leave_summary():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    user_id = session['user_id']
+    # Only count approved leaves
+    leave_requests = LeaveRequest.query.filter_by(user_id=user_id, status='approved').all()
+    summary = {
+        'casual': 0,
+        'medical': 0,
+        'permission': 0
+    }
+    for req in leave_requests:
+        if req.leave_type == 'casual':
+            summary['casual'] += float(req.total_days or 0)
+        elif req.leave_type == 'medical':
+            summary['medical'] += float(req.total_days or 0)
+        elif req.leave_type == 'permission':
+            summary['permission'] += float(req.permission_hours or 0)
+    return jsonify(summary)
+
+@app.route('/api/apply-leave', methods=['POST'])
+def apply_leave():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+
+    data = request.get_json()
+    leave_type = data.get('leave_type')
+    start_date = data.get('start_date')
+    end_date = data.get('end_date')
+    reason = data.get('reason')
+
+    if not all([leave_type, start_date, end_date, reason]):
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    # Map frontend leave type to backend enum
+    leave_type_map = {
+        'Casual Leave': 'casual',
+        'Medical Leave': 'medical',
+        'Permission': 'permission'
+    }
+    leave_type_enum = leave_type_map.get(leave_type)
+    if not leave_type_enum:
+        return jsonify({'error': 'Invalid leave type'}), 400
+
+    leave_request = LeaveRequest(
+        user_id=session['user_id'],
+        leave_type=leave_type_enum,
+        start_date=start_date,
+        end_date=end_date,
+        reason=reason,
+        status='pending',
+        applied_at=datetime.utcnow(),
+        updated_at=datetime.utcnow()
+    )
+    db.session.add(leave_request)
+    db.session.commit()
+    return jsonify({'message': 'Leave applied successfully!'})
+
+@app.route('/api/user-leave-requests')
+def user_leave_requests():
+    if 'user_id' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    user_id = session['user_id']
+    leave_requests = LeaveRequest.query.filter_by(user_id=user_id).order_by(LeaveRequest.applied_at.desc()).all()
+    result = []
+    for req in leave_requests:
+        # Calculate duration and date range
+        if req.start_date and req.end_date:
+            duration_days = (req.end_date - req.start_date).days + 1
+            duration = f"{duration_days} days" if duration_days > 1 else "1 day"
+            date_range = f"{req.start_date.strftime('%d/%m/%Y')} - {req.end_date.strftime('%d/%m/%Y')}"
+        else:
+            duration = f"{req.permission_hours or 0} hours"
+            date_range = "-"
+        result.append({
+            'id': req.id,
+            'dateApplied': req.applied_at.strftime('%d/%m/%Y') if req.applied_at else '',
+            'leaveType': req.leave_type.capitalize() if req.leave_type else '',
+            'duration': duration,
+            'dateRange': date_range,
+            'status': req.status.capitalize() if req.status else '',
+            'managerComments': req.manager_comments or '',
+        })
+    return jsonify(result)
 
 @app.route("/test")
 def test():

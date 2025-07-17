@@ -1,6 +1,15 @@
 # Leave Management System - Google OAuth Integration
-**Date:** June 13, 2024  
+
+<p align="center"><strong>Date: June 14, 2024</strong></p>
+
 **Status:** ✅ Fully Functional
+
+---
+
+## 🆕 **Update Summary (June 14, 2024)**
+- **Leave History Table and Modal Enhanced:**
+  - The EMPLOYEE column and details modal now display the employee's name and their role (e.g., "John Doe (Employee)") for each leave request.
+  - This ensures clarity for all users, regardless of their own role, and matches the professional UI design.
 
 ---
 
@@ -242,6 +251,7 @@ class Config:
 - Error handling
 - CORS configuration
 - Database integration
+- **Leave History table and modal show employee name and role**
 
 ### **✅ Working Components:**
 - OAuth flow with account selection
@@ -249,6 +259,7 @@ class Config:
 - Session persistence
 - Frontend-backend communication
 - Database operations
+- **Leave History UI with employee name and role display**
 
 ## 🔧 **Troubleshooting**
 

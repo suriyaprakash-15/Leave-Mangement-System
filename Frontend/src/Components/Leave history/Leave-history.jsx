@@ -1,43 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Leave-history.css';
-
-// Mock data for leave records
-const mockLeaveRecords = [
-  {
-    id: 1,
-    dateApplied: '15/12/2024',
-    employee: 'John Doe',
-    manager: 'Sarah Johnson',
-    leaveType: 'Annual Leave',
-    duration: '3 days',
-    dateRange: '20/12/2024 - 22/12/2024',
-    status: 'Approved',
-    managerComments: 'Approved for year-end break. Enjoy your...',
-  },
-  {
-    id: 2,
-    dateApplied: '10/12/2024',
-    employee: 'Jane Smith',
-    manager: 'Michael Chen',
-    leaveType: 'Sick Leave',
-    duration: '1 day',
-    dateRange: '12/12/2024 - 12/12/2024',
-    status: 'Approved',
-    managerComments: 'Get well soon. Medical certificate receiv...',
-  },
-  {
-    id: 3,
-    dateApplied: '08/12/2024',
-    employee: 'Robert Wilson',
-    manager: 'Sarah Johnson',
-    leaveType: 'Personal Leave',
-    duration: '3 days',
-    dateRange: '25/12/2024 - 27/12/2024',
-    status: 'Pending',
-    managerComments: 'Under review – checking team coverage.',
-  },
-  // Add more mock records as needed
-];
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { FiFilter } from "react-icons/fi";
+import { FiDownload } from "react-icons/fi";
+import { FiEye } from "react-icons/fi";
+import { FiCalendar } from "react-icons/fi";
 
 const statusColors = {
   Approved: 'approved',
@@ -58,33 +26,7 @@ function StatusSummary({ records }) {
   );
 }
 
-function Filters({ type, status, onTypeChange, onStatusChange, search, onSearchChange }) {
-  return (
-    <div className="filters">
-      <input
-        type="text"
-        placeholder="Search by employee name, leave type, or comments..."
-        value={search}
-        onChange={e => onSearchChange(e.target.value)}
-        className="search-input"
-      />
-      <select value={type} onChange={e => onTypeChange(e.target.value)}>
-        <option value="">All Types</option>
-        <option value="Annual Leave">Annual Leave</option>
-        <option value="Sick Leave">Sick Leave</option>
-        <option value="Personal Leave">Personal Leave</option>
-      </select>
-      <select value={status} onChange={e => onStatusChange(e.target.value)}>
-        <option value="">All Status</option>
-        <option value="Approved">Approved</option>
-        <option value="Pending">Pending</option>
-        <option value="Rejected">Rejected</option>
-      </select>
-    </div>
-  );
-}
-
-function LeaveTable({ records }) {
+function LeaveTable({ records, onViewDetails }) {
   return (
     <table className="leave-table">
       <thead>
@@ -101,21 +43,32 @@ function LeaveTable({ records }) {
       <tbody>
         {records.map(record => (
           <tr key={record.id}>
-            <td>{record.dateApplied}</td>
             <td>
-              <div className="employee-name">{record.employee}</div>
-              <div className="manager-name">Manager: {record.manager}</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <FiCalendar style={{ color: '#6b7280', fontSize: '1.1em' }} />
+                <span>{record.dateApplied}</span>
+              </div>
+            </td>
+            <td>
+              <div className="employee-name">{record.employeeName || "-"} {record.employeeRole ? `(${record.employeeRole.charAt(0).toUpperCase() + record.employeeRole.slice(1)})` : ''}</div>
             </td>
             <td><span className="leave-type">{record.leaveType}</span></td>
             <td>
-              {record.duration}
-              <div className="date-range">{record.dateRange}</div>
+              <div className="duration-days" style={{ fontWeight: 600, fontSize: '1.05em' }}>{record.duration}</div>
+              {record.dateRange && record.dateRange !== "-" && (
+                <div className="duration-dates" style={{ color: '#6b7280', fontSize: '0.95em' }}>{record.dateRange}</div>
+              )}
             </td>
             <td>
               <span className={`status-badge ${statusColors[record.status]}`}>{record.status}</span>
             </td>
             <td>{record.managerComments}</td>
-            <td><button className="view-btn">👁 View</button></td>
+            <td>
+              <button className="view-link" onClick={() => onViewDetails(record)}>
+                <FiEye style={{ verticalAlign: 'middle', color: '#2563eb', marginRight: 4 }} />
+                <span style={{ color: '#2563eb', fontWeight: 500 }}>View</span>
+              </button>
+            </td>
           </tr>
         ))}
       </tbody>
@@ -124,36 +77,101 @@ function LeaveTable({ records }) {
 }
 
 export default function LeaveHistory() {
+  const [leaveRecords, setLeaveRecords] = useState([]);
   const [type, setType] = useState('');
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [showFilters, setShowFilters] = useState(true);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRecord, setSelectedRecord] = useState(null);
+
+  // Export PDF handler
+  const exportPDF = () => {
+    const doc = new jsPDF();
+    doc.text("Leave History", 14, 16);
+    doc.autoTable({
+      head: [[
+        "Date Applied",
+        "Leave Type",
+        "Duration",
+        "Status",
+        "Manager Comments"
+      ]],
+      body: filteredRecords.map(row => [
+        row.dateApplied,
+        row.leaveType,
+        row.duration + (row.dateRange && row.dateRange !== "-" ? ` (${row.dateRange})` : ""),
+        row.status,
+        row.managerComments
+      ]),
+    });
+    doc.save("leave-history.pdf");
+  };
+
+  useEffect(() => {
+    setLoading(true);
+    fetch('http://localhost:5000/api/user-leave-requests', {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setLeaveRecords(data);
+          setError('');
+        } else {
+          setError(data.error || 'Failed to fetch leave history.');
+        }
+        setLoading(false);
+      })
+      .catch(() => {
+        setError('Failed to fetch leave history.');
+        setLoading(false);
+      });
+  }, []);
 
   // Filter logic
-  const filteredRecords = mockLeaveRecords.filter(record => {
+  const filteredRecords = leaveRecords.filter(record => {
     const matchesType = !type || record.leaveType === type;
     const matchesStatus = !status || record.status === status;
     const matchesSearch =
       !search ||
-      record.employee.toLowerCase().includes(search.toLowerCase()) ||
+      (record.employeeName && record.employeeName.toLowerCase().includes(search.toLowerCase())) ||
       record.leaveType.toLowerCase().includes(search.toLowerCase()) ||
       record.managerComments.toLowerCase().includes(search.toLowerCase());
     return matchesType && matchesStatus && matchesSearch;
   });
 
+  const handleViewDetails = (record) => {
+    setSelectedRecord(record);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setShowModal(false);
+    setSelectedRecord(null);
+  };
+
   return (
     <div className="leave-history-container">
-      {/* Header row: title/subtitle left, buttons right */}
       <div className="lh-header-row">
         <div className="lh-header-text">
           <h1>Leave History</h1>
           <p>Manage and track leave applications efficiently</p>
         </div>
         <div className="lh-header-actions">
-          <button className="export-btn">⬇ Export PDF</button>
-          <button className="filters-btn">⚲ Filters</button>
+          <button onClick={exportPDF} className="export-pdf-btn">
+            <FiDownload style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Export PDF
+          </button>
+          <button onClick={() => setShowFilters(f => !f)} className="filters-btn">
+            <FiFilter style={{ marginRight: 6, verticalAlign: 'middle' }} />
+            Filters
+          </button>
         </div>
       </div>
-      {/* Search and Filters combined box */}
+      {showFilters && (
       <div className="lh-search-filters-box">
         <div className="lh-search-container">
           <input
@@ -168,9 +186,9 @@ export default function LeaveHistory() {
           <div className="lh-filters-wrap">
             <select value={type} onChange={e => setType(e.target.value)}>
               <option value="">All Types</option>
-              <option value="Annual Leave">Annual Leave</option>
-              <option value="Sick Leave">Sick Leave</option>
-              <option value="Personal Leave">Personal Leave</option>
+                <option value="Casual">Casual</option>
+                <option value="Medical">Medical</option>
+                <option value="Permission">Permission</option>
             </select>
             <select value={status} onChange={e => setStatus(e.target.value)}>
               <option value="">All Status</option>
@@ -181,17 +199,71 @@ export default function LeaveHistory() {
           </div>
         </div>
       </div>
-      {/* Info and Status Summary row container */}
+      )}
       <div className="lh-info-summary-row">
         <div className="leave-records-info">
-          Showing {filteredRecords.length} of {mockLeaveRecords.length} leave records
+          {loading ? 'Loading...' : `Showing ${filteredRecords.length} of ${leaveRecords.length} leave records`}
         </div>
         <StatusSummary records={filteredRecords} />
       </div>
-      {/* Table container */}
       <div className="lh-table-container">
-        <LeaveTable records={filteredRecords} />
+        {error ? <div className="error-message">{error}</div> : <LeaveTable records={filteredRecords} onViewDetails={handleViewDetails} />}
       </div>
+
+      {/* Details Modal */}
+      {showModal && selectedRecord && (
+        <div className="modal-overlay" onClick={closeModal}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2>Leave Request Details</h2>
+              <button className="modal-close" onClick={closeModal}>×</button>
+            </div>
+            <div className="modal-body">
+              <div className="detail-row">
+                <div className="detail-label">Date Applied:</div>
+                <div className="detail-value">
+                  <FiCalendar style={{ marginRight: 6, color: '#6b7280' }} />
+                  {selectedRecord.dateApplied}
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-label">Employee:</div>
+                <div className="detail-value">{selectedRecord.employeeName || "-"} {selectedRecord.employeeRole ? `(${selectedRecord.employeeRole.charAt(0).toUpperCase() + selectedRecord.employeeRole.slice(1)})` : ''}</div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-label">Leave Type:</div>
+                <div className="detail-value">
+                  <span className="leave-type">{selectedRecord.leaveType}</span>
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-label">Duration:</div>
+                <div className="detail-value">
+                  <div className="duration-days">{selectedRecord.duration}</div>
+                  {selectedRecord.dateRange && selectedRecord.dateRange !== "-" && (
+                    <div className="duration-dates">{selectedRecord.dateRange}</div>
+                  )}
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-label">Status:</div>
+                <div className="detail-value">
+                  <span className={`status-badge ${statusColors[selectedRecord.status]}`}>
+                    {selectedRecord.status}
+                  </span>
+                </div>
+              </div>
+              <div className="detail-row">
+                <div className="detail-label">Manager Comments:</div>
+                <div className="detail-value">{selectedRecord.managerComments || "No comments"}</div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="modal-btn-secondary" onClick={closeModal}>Close</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

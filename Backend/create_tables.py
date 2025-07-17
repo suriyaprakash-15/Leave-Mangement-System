@@ -1,5 +1,5 @@
 from app import app, db
-from models import User
+from models import User, LeaveRequest, LeavePolicy, DataMigration
 
 def create_tables():
     """Create all database tables"""

@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './Components/Login/Login';
 import Dashboard from './Components/Dashboard/Dashboard';
 import LeaveData from './Components/Leave Form/Leave.jsx';
-import Leavehistory from './Components/Leave history/Leave-history.jsx';
+import LeaveHistory from './Components/Leave history/Leave-history.jsx';
 
 export default function App() {
   return (
@@ -12,7 +12,7 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/leaveform" element={<LeaveData />} />
-        <Route path="/Leavehistory" element={<Leavehistory />} />
+        <Route path="/leavehistory" element={<LeaveHistory />} />
       </Routes>
     </Router>
   );

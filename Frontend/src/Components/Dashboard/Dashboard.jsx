@@ -1,92 +1,74 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Dashboard.css';
 import { useAuth } from '../../useAuth';
 import { useNavigate } from 'react-router-dom';
 
-const leaveData = [
-  {
-    type: 'Casual Leave',
-    icon: '📅',
-    used: 3.5,
-    total: 15,
-    available: 11.5,
-    color: '#1976d2',
-  },
-  {
-    type: 'Medical Leave',
-    icon: '🩺',
-    used: 0,
-    total: 15,
-    available: 15,
-    color: '#d32f2f',
-  },
-  {
-    type: 'Permission Requests',
-    icon: '🟡',
-    used: 0,
-    total: 1,
-    available: 1,
-    color: '#fbc02d',
-  },
-];
+const TOTAL_CASUAL = 15;
+const TOTAL_MEDICAL = 15;
+const TOTAL_PERMISSION = 1;
 
-const recentRequests = [
-  {
-    date: '11/07/2025',
-    type: 'Casual',
-    duration: '1 Day',
-    status: 'Approved',
-    comment: 'Enjoy your time off.',
-  },
-  {
-    date: '20/06/2025',
-    type: 'Permission',
-    duration: '2 Hours',
-    status: 'Approved',
-    comment: '-',
-  },
-  {
-    date: '15/06/2025',
-    type: 'Medical',
-    duration: '3 Days',
-    status: 'Approved',
-    comment: 'Hope you feel better.',
-  },
-  {
-    date: '10/04/2025',
-    type: 'Casual',
-    duration: '5 Days',
-    status: 'Rejected',
-    comment: 'Project deadline.',
-  },
-  {
-    date: '10/04/2025',
-    type: 'Casual',
-    duration: '5 Days',
-    status: 'Rejected',
-    comment: 'Project deadline.',
-  },
-];
+const recentRequests = [];
 
 const today = new Date();
 const formattedDate = today.toLocaleDateString('en-GB'); // DD/MM/YYYY
 
-const handleViewHistory = () => {
-  alert('View History clicked!');
-};
-
 const Dashboard = () => {
   const { user, handleLogout, checkAuthStatus } = useAuth();
   const navigate = useNavigate();
+  const [leaveSummary, setLeaveSummary] = useState({ casual: 0, medical: 0, permission: 0 });
 
   useEffect(() => {
     checkAuthStatus();
     // eslint-disable-next-line
   }, []);
 
+  useEffect(() => {
+    // Fetch leave summary from backend
+    fetch('http://localhost:5000/api/user-leave-summary', {
+      credentials: 'include',
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (data && !data.error) {
+          setLeaveSummary(data);
+        }
+      });
+  }, []);
+
   const handleApplyLeave = () => {
     navigate('/leaveform');
   };
+
+  const handleViewHistory = () => {
+    navigate('/leavehistory');
+  };
+
+const leaveData = [
+  {
+    type: 'Casual Leave',
+    icon: '📅',
+      used: leaveSummary.casual,
+      total: TOTAL_CASUAL,
+      available: TOTAL_CASUAL - leaveSummary.casual,
+    color: '#1976d2',
+  },
+  {
+    type: 'Medical Leave',
+    icon: '🩺',
+      used: leaveSummary.medical,
+      total: TOTAL_MEDICAL,
+      available: TOTAL_MEDICAL - leaveSummary.medical,
+    color: '#d32f2f',
+  },
+  {
+    type: 'Permission Requests',
+    icon: '🟡',
+      used: leaveSummary.permission,
+      total: TOTAL_PERMISSION,
+      available: TOTAL_PERMISSION - leaveSummary.permission,
+    color: '#fbc02d',
+  },
+];
 
   return (
     <>
@@ -131,11 +113,11 @@ const Dashboard = () => {
               </div>
               <div className="dashboard-leave-card-content">
                 <div className="dashboard-leave-balance">
-                  {leave.total - leave.available} / {leave.total}
+                  {leave.used} / {leave.total}
                 </div>
-                <div className="dashboard-leave-unit">Days</div>
+                <div className="dashboard-leave-unit">{leave.type === 'Permission Requests' ? 'Hours' : 'Days'}</div>
                 <div className="dashboard-leave-details">
-                  Used: {leave.total - leave.available} | Available: {leave.available}
+                  Used: {leave.used} | Available: {leave.available}
                 </div>
               </div>
             </div>

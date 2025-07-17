@@ -1,8 +1,8 @@
 -- Create the database
-CREATE DATABASE leavemanagement;
+-- CREATE DATABASE leavemanagement;
 
 -- Connect to the database
-\c leavemanagement;
+-- \c leavemanagement;
 
 -- Create the role enum type
 CREATE TYPE role_enum AS ENUM ('employee', 'manager', 'hr', 'ceo', 'consultant');
