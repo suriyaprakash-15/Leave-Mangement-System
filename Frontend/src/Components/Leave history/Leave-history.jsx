@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './Leave-history.css';
 import jsPDF from "jspdf";
-import "jspdf-autotable";
+import autoTable from "jspdf-autotable";
 import { FiFilter } from "react-icons/fi";
 import { FiDownload } from "react-icons/fi";
 import { FiEye } from "react-icons/fi";
@@ -91,7 +91,7 @@ export default function LeaveHistory() {
   const exportPDF = () => {
     const doc = new jsPDF();
     doc.text("Leave History", 14, 16);
-    doc.autoTable({
+    autoTable(doc, {
       head: [[
         "Date Applied",
         "Leave Type",
@@ -173,24 +173,15 @@ export default function LeaveHistory() {
       </div>
       {showFilters && (
       <div className="lh-search-filters-box">
-        <div className="lh-search-container">
-          <input
-            type="text"
-            placeholder="Search by employee name, leave type, or comments..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="search-input"
-          />
-        </div>
         <div className="lh-filters-row">
           <div className="lh-filters-wrap">
-            <select value={type} onChange={e => setType(e.target.value)}>
-              <option value="">All Types</option>
-                <option value="Casual">Casual</option>
-                <option value="Medical">Medical</option>
-                <option value="Permission">Permission</option>
-            </select>
-            <select value={status} onChange={e => setStatus(e.target.value)}>
+            <label htmlFor="status-filter" style={{ marginRight: 8, fontWeight: 500 }}>Status:</label>
+            <select
+              id="status-filter"
+              value={status}
+              onChange={e => setStatus(e.target.value)}
+              style={{ minWidth: 120, padding: '6px 12px', borderRadius: 4 }}
+            >
               <option value="">All Status</option>
               <option value="Approved">Approved</option>
               <option value="Pending">Pending</option>

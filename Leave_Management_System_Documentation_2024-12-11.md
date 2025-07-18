@@ -1,8 +1,17 @@
 # Leave Management System - Google OAuth Integration
 
-<p align="center"><strong>Date: June 14, 2024</strong></p>
+<p align="center"><strong>Date: July 18, 2025</strong></p>
 
 **Status:** ✅ Fully Functional
+
+---
+
+## 🆕 **Update Summary (July 18, 2025)**
+- Fixed the PDF export feature for leave history by ensuring proper integration of jsPDF and autoTable, allowing users to export filtered leave records without errors.
+- Improved the Filters button on the Leave History page: now, clicking the button displays only a prominent Status filter dropdown, making it easier for users to filter leave records by status.
+- Enhanced the overall user experience for filtering and exporting leave records, making the process more intuitive and user-friendly.
+- Performed general troubleshooting and cleaned up frontend dependencies to resolve issues related to package versions and imports.
+- All changes focused on improving usability and clarity for end users, with no backend or database changes required.
 
 ---
 
