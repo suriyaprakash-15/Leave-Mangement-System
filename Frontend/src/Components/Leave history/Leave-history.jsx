@@ -78,9 +78,7 @@ function LeaveTable({ records, onViewDetails }) {
 
 export default function LeaveHistory() {
   const [leaveRecords, setLeaveRecords] = useState([]);
-  const [type, setType] = useState('');
   const [status, setStatus] = useState('');
-  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showFilters, setShowFilters] = useState(true);
@@ -133,14 +131,8 @@ export default function LeaveHistory() {
 
   // Filter logic
   const filteredRecords = leaveRecords.filter(record => {
-    const matchesType = !type || record.leaveType === type;
     const matchesStatus = !status || record.status === status;
-    const matchesSearch =
-      !search ||
-      (record.employeeName && record.employeeName.toLowerCase().includes(search.toLowerCase())) ||
-      record.leaveType.toLowerCase().includes(search.toLowerCase()) ||
-      record.managerComments.toLowerCase().includes(search.toLowerCase());
-    return matchesType && matchesStatus && matchesSearch;
+    return matchesStatus;
   });
 
   const handleViewDetails = (record) => {
