@@ -43,6 +43,10 @@ const Dashboard = () => {
     navigate('/leavehistory');
   };
 
+  const handleManagerDashboard = () => {
+    navigate('/manager-dashboard');
+  };
+
 const leaveData = [
   {
     type: 'Casual Leave',

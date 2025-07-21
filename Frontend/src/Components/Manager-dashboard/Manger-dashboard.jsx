@@ -40,10 +40,7 @@ const ManagerDashboard = () => {
                     </div>
                 </header>
 
-                {/* Removed commented-out stats-grid section with <a href="#"> to fix warnings */}
-
                 <section className="urgent-approvals list-card">
-                {/* <section className="stats-grid"> */}
                     <div className="stat-card pending">
                         <div className="stat-icon-wrapper">
                             <span className="stat-icon"></span>
@@ -84,7 +81,7 @@ const ManagerDashboard = () => {
                             <span>Next 7 days</span>
                         </div>
                     </div>
-                {/* </section> */}
+                </section>
                 <div className="Urgentapprovals">
                     <h4>Urgent Approvals</h4>
                     <ul>
@@ -105,7 +102,6 @@ const ManagerDashboard = () => {
                         ))}
                     </ul>
                 </div>
-                </section>
 
                 <section className="team-availability list-card">
                     <h4>Team Availability</h4>
