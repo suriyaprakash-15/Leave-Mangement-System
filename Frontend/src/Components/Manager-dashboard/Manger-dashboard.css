@@ -1,0 +1,366 @@
+/* General Layout */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    color: #333;
+}
+
+.manager-dashboard-container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 200px;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar-header {
+    padding: 24px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #1a73e8;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+    padding: 20px 0;
+    margin: 0;
+}
+
+.sidebar-nav li a {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px;
+    text-decoration: none;
+    color: #5f6368;
+    font-weight: 500;
+    border-left: 4px solid transparent;
+}
+
+.sidebar-nav li.active a,
+.sidebar-nav li a:hover {
+    background-color: #e8f0fe;
+    color: #1967d2;
+    border-left-color: #1967d2;
+}
+
+.sidebar-nav .icon {
+    margin-right: 16px;
+    font-size: 1.2rem;
+    width: 20px;
+    height: 20px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.sidebar-nav li:nth-child(1) .icon { background-image: url('https://i.imgur.com/example-dashboard-icon.png'); }
+.sidebar-nav li:nth-child(2) .icon { background-image: url('https://i.imgur.com/example-pending-icon.png'); }
+.sidebar-nav li:nth-child(3) .icon { background-image: url('https://i.imgur.com/example-team-icon.png'); }
+.sidebar-nav li:nth-child(4) .icon { background-image: url('https://i.imgur.com/example-calendar-icon.png'); }
+.sidebar-nav li:nth-child(5) .icon { background-image: url('https://i.imgur.com/example-history-icon.png'); }
+.sidebar-nav li:nth-child(6) .icon { background-image: url('https://i.imgur.com/example-reports-icon.png'); }
+
+.sidebar-nav .badge {
+    margin-left: auto;
+    background-color: #fce8e6;
+    color: #d93025;
+    border-radius: 12px;
+    padding: 2px 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 24px;
+    background-color: #f4f7fc;
+}
+
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.main-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: #5f6368;
+}
+
+.user-profile img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+
+/* Stats Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #e0e0e0;
+}
+
+.stat-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stat-icon {
+    width: 24px;
+    height: 24px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.stat-card.pending {
+    background-color: #ffffff;
+    width: 95%;
+    height: 30px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #d2d1d1;
+    margin-bottom: 10px;
+}
+.stat-card.team{
+    background-color: #ffffff;
+    width: 95%;
+    height: 30px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #d2d1d1;
+    margin-bottom: 10px;
+}
+
+.stat-card.approved{
+    background-color: #ffffff;
+    width: 95%;
+    height: 30px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #d2d1d1;
+    margin-bottom: 10px;
+}
+.stat-card.upcoming{
+    background-color: #ffffff;
+    width: 95%;
+    height: 30px;
+    border-radius: 8px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border: 1px solid #d2d1d1;
+    margin-bottom: 10px;
+}
+
+.stat-card.pending .stat-icon-wrapper {
+     background-color: #fce8e6;
+}
+.stat-card.pending .stat-icon {
+     background-image: url('https://i.imgur.com/example-pending-lg-icon.png'); }
+
+.stat-card.team .stat-icon-wrapper { background-color: #e8f0fe; }
+.stat-card.team .stat-icon { background-image: url('https://i.imgur.com/example-team-lg-icon.png'); }
+
+.stat-card.approved .stat-icon-wrapper { background-color: #e6f4ea; }
+.stat-card.approved .stat-icon { background-image: url('https://i.imgur.com/example-approved-lg-icon.png'); }
+
+.stat-card.upcoming .stat-icon-wrapper { background-color: #f3e8fd; }
+.stat-card.upcoming .stat-icon { background-image: url('https://i.imgur.com/example-upcoming-lg-icon.png'); }
+
+.stat-info h3 {
+    margin: 0 0 4px 0;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 100;
+}
+
+.stat-info p {
+    margin: 0;
+    font-size: 1rem;
+    color: #5f6368;
+}
+
+.review-link {
+    font-size: 0.9rem;
+    color: #d93025;
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.positive-change {
+    font-size: 0.9rem;
+    color: #1e8e3e;
+    font-weight: 500;
+}
+
+/* List Cards (Urgent Approvals, Team Availability) */
+.Urgentapprovals{
+    background-color: #ffffff;
+    
+    border-radius: 8px;
+    /* padding: 20px; */
+    /* display: flex; */
+    /* align-items: center; */
+    /* gap: 16px; */
+    border: 1px solid #d2d1d1;
+    margin-bottom: 10px;
+}
+
+.Urgentapprovals h4{
+    margin: 0 0 16px 0;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 500;
+}
+.list-card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 24px;
+    margin-bottom: 24px;
+    border: 1px solid #e0e0e0;
+}
+
+.list-card h4 {
+    margin: 0 0 16px 0;
+    text-align: left;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.list-card ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-card li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f1f3f4;
+}
+
+.urgent-list-item {
+    border-left: 2px solid #d93025;
+    padding-left: 12px;
+}
+
+.list-card li:last-child {
+    border-bottom: none;
+}
+
+.approval-info, .member-info {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.avatar-placeholder {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #5f6368;
+}
+
+.name {
+    font-weight: 500;
+    display: flex;
+    text-align: left;
+    /* align-items: center; */
+    gap: 8px;
+}
+
+.type, .role {
+    color: #5f6368;
+    font-size: 0.9rem;
+}
+
+.type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.person-icon {
+    width: 16px;
+    height: 16px;
+    background-image: url('https://i.imgur.com/example-person-icon.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.review-btn {
+    background-color: #e8f0fe;
+    color: #1967d2;
+    border: none;
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.availability-status {
+    text-align: right;
+}
+
+.availability-status span {
+    font-weight: 500;
+}
+.availability-status small {
+    display: block;
+    color: #5f6368;
+}
+.availability-status.available span { color: #1e8e3e; }
+.availability-status.on-leave span { color: #d93025; }
+
