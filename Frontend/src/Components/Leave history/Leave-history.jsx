@@ -78,7 +78,9 @@ function LeaveTable({ records, onViewDetails }) {
 
 export default function LeaveHistory() {
   const [leaveRecords, setLeaveRecords] = useState([]);
+  const [type, setType] = useState('');
   const [status, setStatus] = useState('');
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showFilters, setShowFilters] = useState(true);
@@ -131,8 +133,14 @@ export default function LeaveHistory() {
 
   // Filter logic
   const filteredRecords = leaveRecords.filter(record => {
+    const matchesType = !type || record.leaveType === type;
     const matchesStatus = !status || record.status === status;
-    return matchesStatus;
+    const matchesSearch =
+      !search ||
+      (record.employeeName && record.employeeName.toLowerCase().includes(search.toLowerCase())) ||
+      record.leaveType.toLowerCase().includes(search.toLowerCase()) ||
+      record.managerComments.toLowerCase().includes(search.toLowerCase());
+    return matchesType && matchesStatus && matchesSearch;
   });
 
   const handleViewDetails = (record) => {
@@ -165,15 +173,27 @@ export default function LeaveHistory() {
       </div>
       {showFilters && (
       <div className="lh-search-filters-box">
+        <div className="lh-search-container">
+          <input
+            type="text"
+            placeholder="Search by employee name, leave type, or comments..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="search-input"
+          />
+        </div>
         <div className="lh-filters-row">
           <div className="lh-filters-wrap">
-            <label htmlFor="status-filter" style={{ marginRight: 8, fontWeight: 500 }}>Status:</label>
-            <select
-              id="status-filter"
-              value={status}
-              onChange={e => setStatus(e.target.value)}
-              style={{ minWidth: 120, padding: '6px 12px', borderRadius: 4 }}
-            >
+            <select value={type} onChange={e => setType(e.target.value)}>
+              <option value="">All Types</option>
+                <option value="Casual">Casual</option>
+                <option value="Medical">Medical</option>
+                <option value="Permission">Permission</option>
+                <option value="Annual Leave">Annual Leave</option>
+                <option value="Sick Leave">Sick Leave</option>
+                <option value="Personal Leave">Personal Leave</option>
+            </select>
+            <select value={status} onChange={e => setStatus(e.target.value)}>
               <option value="">All Status</option>
               <option value="Approved">Approved</option>
               <option value="Pending">Pending</option>
